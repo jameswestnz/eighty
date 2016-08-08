@@ -1,8 +1,11 @@
 {
   "name": "eighty",
   "version": "0.0.1",
-  "description": "Simple node webserver based on Koa",
-  "main": "index.js",
+  "description": "Multi host web server for node",
+  "bin": {
+    "eighty": "./bin/start.js"
+  },
+  "main": "server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +18,12 @@
   "bugs": {
     "url": "https://github.com/jameswestnz/eighty/issues"
   },
-  "homepage": "https://github.com/jameswestnz/eighty#readme"
+  "homepage": "https://github.com/jameswestnz/eighty#readme",
+  "dependencies": {
+    "h2o2": "^5.1.0",
+    "hapi": "^14.1.0",
+    "inert": "^4.0.1",
+    "lodash": "^4.14.1",
+    "rc": "^1.1.6"
+  }
 }
