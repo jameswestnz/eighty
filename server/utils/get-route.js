@@ -11,15 +11,9 @@ var
 function getRoute(name, options, server) {
   var state = this
   var route = {
-    method: '*',
+    method: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     path: '/{p*}',
-    vhost: options.host,
-    config: {
-      payload: {
-        output: 'stream',
-        parse: false
-      }
-    }
+    vhost: options.host
   };
   var type = (options.static) ? 'static' : 'proxy';
 
