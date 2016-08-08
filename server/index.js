@@ -39,5 +39,8 @@ function register(server, options, next) {
   server.register([
     { register: h2o2 },
     { register: inert }
-  ], next);
+  ]);
+
+  // always continue init, server.register wil fail if either are already registered
+  next();
 }
