@@ -15,14 +15,9 @@ function getRoute(name, options, server) {
     path: '/{p*}',
     vhost: options.host
   };
-  var type = (options.static) ? 'static' : 'proxy';
-
-  // if we're proxy (default), but we don't have any settings, assume we're routing to the local app (currently untested)
-  if(type === 'proxy' && !options.proxy) {
-    options.proxy = {
-      port: server.info.port
-    }
-  }
+  var type = 'internal';
+  if(options.static) type = 'static';
+  if(options.proxy) type = 'proxy';
 
   // mutate the route based on type
   switch(type) {
@@ -32,6 +27,10 @@ function getRoute(name, options, server) {
 
     case 'proxy':
       route = _.defaultsDeep(proxyRoute(options), route);
+    break;
+
+    case 'internal':
+      route = _.defaultsDeep(internalRoute(server), route);
     break;
   }
 
@@ -62,38 +61,25 @@ function proxyRoute(options) {
   }
 
   return {
-    /*config: {
-      ext: {
-        // allows us to watch for errors
-        onPostHandler: {
-          method: function(request, reply) {
-            var response = request.response;
-            // do we have an unexpected result?
-            var status = response.statusCode || ((response.output && response.output.statusCode) ? response.output.statusCode : null);
-            // only want errors
-            if(status[0] === 4 || status[0] === 5) {
-              var sendTo = options.errors[status] || options.errors['default'] || undefined;
-              if(sendTo) {
-                reply.proxy({
-                  passThrough: true,
-                  host: proxy.host,
-                  port: proxy.port,
-                  protocol: proxy.protocol,
-                  pathname: sendTo
-                });
-              }
-            }
-            return reply.continue();
-          }
-        }
-      }
-    },*/
     handler: {
       proxy: {
         passThrough: true,
         host: proxy.host,
         port: proxy.port,
         protocol: proxy.protocol
+      }
+    }
+  }
+}
+
+function internalRoute(server) {
+  return {
+    handler: {
+      proxy: {
+        passThrough: true,
+        host: server.info.host,
+        port: server.info.port,
+        protocol: 'http'
       }
     }
   }
