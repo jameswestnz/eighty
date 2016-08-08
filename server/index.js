@@ -1,12 +1,11 @@
 module.exports.register = register
 module.exports.register.attributes = {
-  name: 'eighty'
+  name: 'eighty',
+  dependencies: ['h2o2', 'inert']
 }
 
 var
   // modules
-  h2o2              = require('h2o2'),
-  inert             = require('inert'),
 
   // local
   getState          = require('./utils/get-state'),
@@ -35,12 +34,5 @@ function register(server, options, next) {
     next();
   });
 
-  // register plugins required for this plugin to do it's job
-  server.register([
-    { register: h2o2 },
-    { register: inert }
-  ]);
-
-  // always continue init, server.register wil fail if either are already registered
   next();
 }

@@ -3,6 +3,8 @@ module.exports = cli
 var
   // modules
   Hapi            = require('hapi'),
+  h2o2            = require('h2o2'),
+  inert           = require('inert'),
   rc              = require('rc'),
 
   // local
@@ -19,10 +21,18 @@ function cli(callback) {
     port: options.port
   });
 
-  server.register({
-    register: eighty,
-    options: options
-  }, function (error) {
+  server.register([
+    {
+      register: h2o2
+    },
+    {
+      register: inert
+    },
+    {
+      register: eighty,
+      options: options
+    }
+  ], function (error) {
     if (error) {
       return callback(error)
     }
