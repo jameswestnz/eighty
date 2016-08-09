@@ -1,7 +1,6 @@
 module.exports.register = register
 module.exports.register.attributes = {
-  name: 'eighty',
-  dependencies: ['h2o2', 'inert']
+  name: 'eighty'
 }
 
 var
