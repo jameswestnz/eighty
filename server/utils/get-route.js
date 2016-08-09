@@ -3,7 +3,8 @@ module.exports = getRoute
 var
   // modules
   _                 = require('lodash'),
-  url               = require('url')
+  url               = require('url'),
+  path              = require('path')
 
   // local
 ;
@@ -39,12 +40,35 @@ function getRoute(name, options, server) {
 
 function staticRoute(options) {
   var opts = (typeof options.static === 'object') ? options.static : {
-    path: options.static
+    directory: {
+      path: options.static
+    }
   };
 
   return {
     handler: {
-      directory: opts
+      directory: opts.directory
+    },
+    config: {
+      ext: {
+        onPostHandler: {
+          method: function(request, reply) {
+            var response = request.response;
+            var statusCode = response.statusCode || response.output.statusCode || null;
+
+            if(opts.errors && (String(statusCode).charAt(0) === '4' || String(statusCode).charAt(0) === '5')) {
+              var errorRoute = opts.errors[statusCode] || opts.errors['default'] || null;
+              if(errorRoute) {
+                return reply.file(path.format({ dir: opts.directory.path, base: errorRoute }), {
+                  confine: false
+                });
+              }
+            }
+
+            return reply.continue();
+          }
+        }
+      }
     }
   }
 }
