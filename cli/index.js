@@ -17,9 +17,6 @@ function cli(callback) {
   });
 
   var server = new Hapi.Server();
-  server.connection({
-    port: options.port
-  });
 
   server.register([
     {

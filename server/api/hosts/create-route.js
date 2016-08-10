@@ -9,29 +9,24 @@ var
   // local
 ;
 
-function getRoute(name, options, server) {
+function getRoute(path, options) {
   var state = this
   var route = {
-    method: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    path: '/{p*}',
-    vhost: options.host
+    path: path,
+    method: options.method || ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
   };
-  var type = 'internal';
+  var type = null;
   if(options.static) type = 'static';
   if(options.proxy) type = 'proxy';
 
   // mutate the route based on type
   switch(type) {
     case 'static':
-      route = _.defaultsDeep(staticRoute(options), route)
+      route = _.defaultsDeep(staticRoute(options.static), route)
     break;
 
     case 'proxy':
-      route = _.defaultsDeep(proxyRoute(options), route);
-    break;
-
-    case 'internal':
-      route = _.defaultsDeep(internalRoute(server), route);
+      route = _.defaultsDeep(proxyRoute(options.proxy), route);
     break;
   }
 
@@ -39,9 +34,9 @@ function getRoute(name, options, server) {
 }
 
 function staticRoute(options) {
-  var opts = (typeof options.static === 'object') ? options.static : {
+  var opts = (typeof options === 'object') ? options : {
     directory: {
-      path: options.static
+      path: options
     }
   };
 
@@ -74,8 +69,8 @@ function staticRoute(options) {
 }
 
 function proxyRoute(options) {
-  var opts = (typeof options.proxy === 'object') ? options.proxy : {
-    port: options.proxy
+  var opts = (typeof options === 'object') ? options : {
+    port: options
   };
 
   var proxy = {
@@ -91,19 +86,6 @@ function proxyRoute(options) {
         host: proxy.host,
         port: proxy.port,
         protocol: proxy.protocol
-      }
-    }
-  }
-}
-
-function internalRoute(server) {
-  return {
-    handler: {
-      proxy: {
-        passThrough: true,
-        host: server.info.host,
-        port: server.info.port,
-        protocol: 'http'
       }
     }
   }
