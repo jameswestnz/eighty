@@ -20,11 +20,20 @@ function getServers(api, state) {
       });
 
       // create routes
-      var routes = Object.keys(locations).map(function(locationName){
-        var location = locations[locationName];
-        location.vhost = serverName;
-        return api.locations.add(locationName, connection, location);
-      })
+      // check if we have a default...
+      if(locations.default === true) {
+        locations.path = '/{p*}';
+        locations.vhost = serverName;
+        var routes = api.locations.add('default', connection, locations);
+      } else
+      // or we have multiple locations to create
+      {
+        var routes = Object.keys(locations).map(function(locationName){
+          var location = locations[locationName];
+          location.vhost = serverName;
+          return api.locations.add(locationName, connection, location);
+        })
+      }
 
       return Promise.all(routes)
         .then(state.emitter.emit.bind(null, 'servers:add', name, serverName, listen, locations))

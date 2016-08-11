@@ -1,6 +1,6 @@
 {
   "name": "eighty-server",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Multi host web server for node",
   "bin": {
     "eighty": "./bin/start.js"
