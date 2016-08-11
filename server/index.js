@@ -1,37 +1,30 @@
 module.exports.register = register
 module.exports.register.attributes = {
-  name: 'eighty'
+  name: 'eighty',
+  connections: false
 }
 
 var
   // modules
 
   // local
-  getState          = require('./utils/get-state'),
-  getApi            = require('./utils/get-api'),
-  getRoute          = require('./utils/get-route.js')
+  getOptions        = require('./options'),
+  getState          = require('./state'),
+  getApi            = require('./api')
 ;
 
 function register(server, options, next) {
-  var state = getState(options);
-  var api = getApi(state);
+  var options = getOptions(options);
+  var state = getState(server);
+  var api = getApi(state, options);
+
+  Object.keys(api.options.servers).map(function(name) {
+    var server = api.options.servers[name]
+    api.servers.add(name, server.name, server.listen, server.locations);
+  });
 
   // expose the api for events and access to options
   server.expose('api', api)
-
-  // only apply routes as we start the server so we can wait for events to be bound
-  server.ext('onPreStart', function(server, next) {
-    // connect apps
-    Object.keys(api.options.apps).map(function(key) {
-      var app = api.options.apps[key]
-      var route = getRoute.call(state, key, app, server)
-      server.route(route);
-      state.emitter.emit.call(this, 'app:connect', key, app);
-      return route
-    })
-
-    next();
-  });
 
   next();
 }

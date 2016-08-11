@@ -14,12 +14,10 @@ var
 
 function cli() {
   var options = rc('eighty', {
-    port: 9292
+    servers: {}
   });
 
   var server = new Hapi.Server();
-
-  server.connection({port: options.port})
 
   // register dependencies
   return server.register([h2o2, inert])
@@ -28,22 +26,13 @@ function cli() {
       options: options
     }))
 
-    .then(function () {
-      var eighty = server.plugins.eighty.api;
+    .then(server.start.bind(server))
 
-      eighty.on('app:connect', function(name, options){
-        console.log('App added: ' + name);
-      });
-
-      return server.start()
-        .then(function(){
-          return server;
-        })
-      ;
+    .then(function(){
+      return server
     })
 
     .catch(function(err){
-      console.log(err);
       return Promise.reject(err)
     })
 }
