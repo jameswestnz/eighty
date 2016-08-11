@@ -13,7 +13,8 @@ var
 function createRoute(name, options) {
   var route = {
     path: options.path,
-    method: options.method || ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    method: options.method || '*',
+    vhost: options.vhost,
     config: {
       id: name,
       ext: {

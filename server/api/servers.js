@@ -2,29 +2,37 @@ module.exports = getServers
 
 var
   // modules
-  Promise           = require('promise')
+  Promise           = require('promise'),
+  http              = require('http')
 
   // local
 ;
 
 function getServers(api, state) {
   var serversApi = this;
+  var connections = {}
   return {
     add: function(name, serverName, listen, locations) {
-      var connection = state.server.connection({
-        host: serverName,
+      var connection = connections[listen] = connections[listen] || state.server.connection({
+        //host: serverName,
         port: listen,
-        labels: [name]
+        labels: ['eighty', 'port:' + listen, name]
       });
 
       // create routes
       var routes = Object.keys(locations).map(function(locationName){
         var location = locations[locationName];
+        location.vhost = serverName;
         return api.locations.add(locationName, connection, location);
       })
 
       return Promise.all(routes)
         .then(state.emitter.emit.bind(null, 'servers:add', name, serverName, listen, locations))
+    },
+
+    get: function(name) {
+      if(name) return api.options.servers[name]
+      return api.options.servers
     },
 
     // events

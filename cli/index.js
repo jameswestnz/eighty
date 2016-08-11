@@ -29,7 +29,7 @@ function cli() {
     .then(server.start.bind(server))
 
     .then(function(){
-      return server
+      return server.plugins.eighty.api
     })
 
     .catch(function(err){
