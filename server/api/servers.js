@@ -24,7 +24,7 @@ function getServers(api, state) {
       if(locations.default === true) {
         locations.path = '/{p*}';
         locations.vhost = serverName;
-        var routes = api.locations.add('default', connection, locations);
+        var routes = api.locations.add(null, connection, locations);
       } else
       // or we have multiple locations to create
       {
@@ -36,7 +36,7 @@ function getServers(api, state) {
       }
 
       return Promise.all(routes)
-        .then(state.emitter.emit.bind(null, 'servers:add', name, serverName, listen, locations))
+        .then(state.emitter.emit.bind(this, 'servers:add', name, serverName, listen, locations))
     },
 
     get: function(name) {
@@ -46,13 +46,13 @@ function getServers(api, state) {
 
     // events
     on: function(name, listener) {
-      return state.emitter.on.call(this, 'servers:' + name, listener)
+      return state.emitter.on('servers:' + name, listener)
     },
     once: function(name, listener) {
-      return state.emitter.once.call(this, 'servers:' + name, listener)
+      return state.emitter.once('servers:' + name, listener)
     },
     off: function(name, listener) {
-      return state.emitter.off.call(this, 'servers:' + name, listener)
+      return state.emitter.removeListener('servers:' + name, listener)
     }
   }
 }

@@ -18,13 +18,17 @@ function register(server, options, next) {
   var state = getState(server);
   var api = getApi(state, options);
 
-  Object.keys(api.options.servers).map(function(name) {
+  var servers = Object.keys(api.options.servers).map(function(name) {
     var server = api.options.servers[name]
-    api.servers.add(name, server.name, server.listen, server.locations);
+    return api.servers.add(name, server.name, server.listen, server.locations);
   });
 
   // expose the api for events and access to options
   server.expose('api', api)
 
-  next();
+  Promise.all(servers)
+    .then(next)
+    .catch(function(err){
+      console.log('eighty-server error: ' + err)
+    })
 }

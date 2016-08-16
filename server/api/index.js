@@ -13,9 +13,15 @@ function getApi(state, options) {
     options: options,
 
     // events
-    on: state.emitter.on.bind(this),
-    once: state.emitter.once.bind(this),
-    off: state.emitter.removeListener.bind(this),
+    on: function(name, listener) {
+      return state.emitter.on(name, listener)
+    },
+    once: function(name, listener) {
+      return state.emitter.once(name, listener)
+    },
+    off: function(name, listener) {
+      return state.emitter.removeListener(name, listener)
+    }
   }
 
   // sub apis

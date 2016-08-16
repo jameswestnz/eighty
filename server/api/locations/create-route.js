@@ -16,7 +16,7 @@ function createRoute(name, options) {
     method: options.method || '*',
     vhost: options.vhost,
     config: {
-      id: name,
+      //id: name,
       ext: {
         onPostHandler: {
           method: function(request, reply) {
