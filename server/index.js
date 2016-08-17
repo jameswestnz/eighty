@@ -6,6 +6,8 @@ module.exports.register.attributes = {
 
 var
   // modules
+  h2o2              = require('h2o2'),
+  inert             = require('inert'),
 
   // local
   getOptions        = require('./options'),
@@ -18,15 +20,18 @@ function register(server, options, next) {
   var state = getState(server);
   var api = getApi(state, options);
 
-  var servers = Object.keys(api.options.servers).map(function(name) {
-    var server = api.options.servers[name]
-    return api.servers.add(name, server.name, server.listen, server.locations);
-  });
-
   // expose the api for events and access to options
   server.expose('api', api)
 
-  Promise.all(servers)
+  server.register([h2o2, inert])
+    .then(function(){
+      var servers = Object.keys(api.options.servers).map(function(name) {
+        var server = api.options.servers[name]
+        return api.servers.add(name, server.name, server.listen, server.locations);
+      });
+
+      return Promise.all(servers)
+    })
     .then(next)
     .catch(function(err){
       console.log('eighty-server error: ' + err)
