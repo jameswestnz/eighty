@@ -1,5 +1,5 @@
 {
-  "name": "@eighty/server",
+  "name": "eighty-server",
   "version": "0.0.12",
   "description": "Multi host web server for node",
   "bin": {
