@@ -19,17 +19,15 @@ function cli() {
 
   // register dependencies
   return server.register({
-      register: eighty,
-      options: options
-    })
-
+    register: eighty,
+    options: options
+  })
     .then(function(){
       return server.start()
         .then(function() {
           return server.plugins.eighty.api
         })
     })
-
     .catch(function(err){
       return Promise.reject(err)
     })

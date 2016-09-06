@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var
   // local
   cli     = require('../cli')
